@@ -1,4 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
+import 'homeScreen.dart'; // Import your HomeScreen
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -9,6 +13,57 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   bool _obscurePassword = true;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController referralCodeController = TextEditingController();
+
+  Future<void> _register() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? userId = prefs.getString('userId');
+
+    // Prepare the data for registration
+    final Map<String, dynamic> data = {
+      'email': emailController.text,
+      'password': passwordController.text,
+      'referralCode': referralCodeController.text.isNotEmpty
+          ? referralCodeController.text
+          : null,
+      'userId': userId,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/email/referral'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        if (responseBody['status'] == 1) {
+          // Registration successful, navigate to HomeScreen
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (ctx) => HomeScreen()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+                content:
+                    Text(responseBody['message'] ?? 'Registration failed')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: ${response.reasonPhrase}')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error occurred: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +117,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
 
                 TextField(
+                  controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Your Email',
                     border: UnderlineInputBorder(),
@@ -71,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 20),
 
                 TextField(
+                  controller: passwordController,
                   obscureText: _obscurePassword,
                   decoration: InputDecoration(
                     labelText: 'Create Password',
@@ -92,6 +149,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(height: 20),
 
                 TextField(
+                  controller: referralCodeController,
                   decoration: InputDecoration(
                     labelText: 'Referral Code (Optional)',
                     border: UnderlineInputBorder(),
@@ -102,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: _register, // Call the register function on tap
                     child: Container(
                       height: 60,
                       width: 60,
@@ -117,7 +175,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       ),
                     ),
                   ),
-                )
+                ),
               ],
             ),
           ),
