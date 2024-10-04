@@ -84,7 +84,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
 
             // Success, navigate to OTP screen
             Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
-              return OtpScreen();
+              return OtpScreen(phoneNumber: phoneNumber);
             }));
           } else {
             ScaffoldMessenger.of(context).showSnackBar(

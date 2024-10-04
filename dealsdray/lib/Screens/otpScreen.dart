@@ -7,7 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class OtpScreen extends StatefulWidget {
-  const OtpScreen({super.key});
+  final String phoneNumber;
+
+  const OtpScreen({super.key, required this.phoneNumber});
 
   @override
   State<OtpScreen> createState() => _OtpScreenState();
@@ -52,15 +54,13 @@ class _OtpScreenState extends State<OtpScreen> {
     super.dispose();
   }
 
-  // Handle OTP input change
   void _handleOtpChange() {
     otp = otpControllers.map((controller) => controller.text).join();
     if (otp.length == 4) {
-      _verifyOtp(); // Automatically trigger OTP verification when 4 digits are entered
+      _verifyOtp();
     }
   }
 
-  // Function to get deviceId and userId from SharedPreferences
   Future<Map<String, String?>> _getDeviceAndUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final deviceId = prefs.getString('deviceId');
@@ -71,7 +71,6 @@ class _OtpScreenState extends State<OtpScreen> {
     };
   }
 
-  // Function to verify OTP
   Future<void> _verifyOtp() async {
     final ids = await _getDeviceAndUserId();
     final String? deviceId = ids['deviceId'];
@@ -84,7 +83,6 @@ class _OtpScreenState extends State<OtpScreen> {
       return;
     }
 
-    // Prepare the data for OTP verification
     final Map<String, String> data = {
       'otp': otp,
       'deviceId': deviceId,
@@ -101,7 +99,6 @@ class _OtpScreenState extends State<OtpScreen> {
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
         if (responseBody['status'] == 1) {
-          // OTP verified successfully, navigate to HomeScreen
           Navigator.of(context)
               .pushReplacement(MaterialPageRoute(builder: (ctx) {
             return HomeScreen();
@@ -120,6 +117,50 @@ class _OtpScreenState extends State<OtpScreen> {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('OTP verification failed')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error occurred: $e')),
+      );
+    }
+  }
+
+  // New method to send OTP
+  Future<void> _sendOtp() async {
+    final ids = await _getDeviceAndUserId();
+    final String? deviceId = ids['deviceId'];
+
+    if (deviceId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Device ID not found')),
+      );
+      return;
+    }
+
+    final Map<String, String> data = {
+      'mobileNumber':
+          widget.phoneNumber, // Use the phone number passed to the widget
+      'deviceId': deviceId,
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse('http://devapiv4.dealsdray.com/api/v2/user/otp'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(data),
+      );
+
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text(responseBody['message'] ?? 'OTP sent successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to send OTP')),
         );
       }
     } catch (e) {
@@ -192,7 +233,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                     fontWeight: FontWeight.bold),
                               ),
                               Text(
-                                'to your mobile +91-9765322817',
+                                'to your mobile +91-${widget.phoneNumber}',
                                 style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16,
@@ -240,6 +281,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                     _start = 120;
                                     startTimer();
                                   });
+                                  _sendOtp(); // Call the new method to send the OTP
                                 }
                               : null,
                           child: Text(
