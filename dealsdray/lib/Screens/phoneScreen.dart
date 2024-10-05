@@ -21,20 +21,19 @@ class _PhoneScreenState extends State<PhoneScreen> {
     super.dispose();
   }
 
-  // Function to get deviceId from SharedPreferences
+  
   Future<String?> _getDeviceId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString('deviceId');
   }
 
-  // Function to store userId in SharedPreferences
+ 
   Future<void> _storeUserId(String userId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('userId', userId);
     print("useerId:" + userId);
   }
 
-  // Function to send OTP request
   Future<void> _sendOtp() async {
     final String phoneNumber = _phoneController.text;
     final String? deviceId = await _getDeviceId();
@@ -59,7 +58,6 @@ class _PhoneScreenState extends State<PhoneScreen> {
       return;
     }
 
-    // Prepare the data to be sent
     final Map<String, String> data = {
       'mobileNumber': phoneNumber,
       'deviceId': deviceId,
@@ -79,10 +77,10 @@ class _PhoneScreenState extends State<PhoneScreen> {
           final String? userId = responseBody['data']['userId'];
 
           if (userId != null) {
-            // Store userId in SharedPreferences
+            
             await _storeUserId(userId);
 
-            // Success, navigate to OTP screen
+            
             Navigator.of(context).push(MaterialPageRoute(builder: (ctx) {
               return OtpScreen(phoneNumber: phoneNumber);
             }));
@@ -188,10 +186,10 @@ class _PhoneScreenState extends State<PhoneScreen> {
                     ),
               SizedBox(height: 20),
               ElevatedButton(
-                onPressed: _sendOtp, // Call the function to send OTP
+                onPressed: _sendOtp, 
                 style: ElevatedButton.styleFrom(
                   primary: Colors.red,
-                  minimumSize: Size(double.infinity, 50), // Button full width
+                  minimumSize: Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),

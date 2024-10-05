@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'homeScreen.dart'; // Import your HomeScreen
+import 'homeScreen.dart'; 
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -21,7 +21,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     final prefs = await SharedPreferences.getInstance();
     final String? userId = prefs.getString('userId');
 
-    // Prepare the data for registration
+    
     final Map<String, dynamic> data = {
       'email': emailController.text,
       'password': passwordController.text,
@@ -41,7 +41,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (response.statusCode == 200) {
         final responseBody = jsonDecode(response.body);
         if (responseBody['status'] == 1) {
-          // Registration successful, navigate to HomeScreen
+         
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(builder: (ctx) => HomeScreen()),
           );
@@ -75,7 +75,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Back Button
+              
                 IconButton(
                   icon: Icon(Icons.arrow_back, color: Colors.black),
                   onPressed: () {
@@ -160,7 +160,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 Align(
                   alignment: Alignment.bottomRight,
                   child: GestureDetector(
-                    onTap: _register, // Call the register function on tap
+                    onTap: _register, 
                     child: Container(
                       height: 60,
                       width: 60,

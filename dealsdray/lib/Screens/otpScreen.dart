@@ -126,7 +126,6 @@ class _OtpScreenState extends State<OtpScreen> {
     }
   }
 
-  // New method to send OTP
   Future<void> _sendOtp() async {
     final ids = await _getDeviceAndUserId();
     final String? deviceId = ids['deviceId'];
@@ -139,8 +138,7 @@ class _OtpScreenState extends State<OtpScreen> {
     }
 
     final Map<String, String> data = {
-      'mobileNumber':
-          widget.phoneNumber, // Use the phone number passed to the widget
+      'mobileNumber': widget.phoneNumber,
       'deviceId': deviceId,
     };
 
@@ -281,7 +279,7 @@ class _OtpScreenState extends State<OtpScreen> {
                                     _start = 120;
                                     startTimer();
                                   });
-                                  _sendOtp(); // Call the new method to send the OTP
+                                  _sendOtp();
                                 }
                               : null,
                           child: Text(

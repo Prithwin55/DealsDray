@@ -84,12 +84,12 @@ class _SplashScreenState extends State<SplashScreen> {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: jsonEncode(deviceData), // Convert the device data to JSON
+        body: jsonEncode(deviceData), 
       );
 
       if (response.statusCode == 200) {
         print("Device info sent successfully");
-        print(response.body); // You can also handle the response data here
+        print(response.body); 
       } else {
         print("Failed to send device info: ${response.statusCode}");
         print(response.body);

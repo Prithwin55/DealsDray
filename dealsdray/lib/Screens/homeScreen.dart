@@ -269,8 +269,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        Color(0xFF68BBE3), // Light blue color
-                        Color(0xFF0B78D4), // Darker blue color (adjusted)
+                        Color(0xFF68BBE3),
+                        Color(0xFF0B78D4),
                       ],
                     ),
                   ),
@@ -296,8 +296,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 color: const Color.fromARGB(255, 255, 255, 255),
                               ),
                             ),
-                            SizedBox(
-                                height: 16), // Spacing between title and list
+                            SizedBox(height: 16),
                             SizedBox(
                               height: 450,
                               child: ListView(
@@ -399,7 +398,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Method to create each card item in the row
   Widget cardItem(String imagePath) {
     return Card(
       margin: const EdgeInsets.all(8.0),
@@ -415,7 +413,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Method to create each category button
   Widget categoryItem(IconData icon, String label) {
     return Column(
       children: [
@@ -444,7 +441,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Stack(
               children: [
-                // Product Image
                 Center(
                   child: Image.network(
                     imagePath,
@@ -453,10 +449,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     fit: BoxFit.contain,
                   ),
                 ),
-                // Positioned Green Tag
                 Positioned(
                   top: 1,
-                  right: 10, // Adjusted the position to be beside the image
+                  right: 10,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8.0,
